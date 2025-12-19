@@ -1,8 +1,11 @@
 #include <QApplication>
 #include <QGraphicsView>
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QScreen>
 #include <QTimer>
+#include <algorithm>
 #include <memory>
 
 #include "first_level.hpp"
@@ -30,7 +33,9 @@ public:
 
         setScene(game_map);
         setSceneRect(game_map->sceneRect());
-        setFixedSize(sceneRect().size().toSize());
+        adjust_window_size();
+        apply_view_scale();
+        position_camera_on_mario();
 
         connect(&timer, &QTimer::timeout, this, &GameWindow::tick);
         timer.start(16); // ~60 FPS
@@ -44,11 +49,11 @@ protected:
         switch (event->key()) {
             case Qt::Key_A:
             case Qt::Key_Left:
-                move_left = true;
+                move_right = true;
                 break;
             case Qt::Key_D:
             case Qt::Key_Right:
-                move_right = true;
+                move_left = true;
                 break;
             case Qt::Key_Space:
             case Qt::Key_W:
@@ -71,11 +76,11 @@ protected:
         switch (event->key()) {
             case Qt::Key_A:
             case Qt::Key_Left:
-                move_left = false;
+                move_right = false;
                 break;
             case Qt::Key_D:
             case Qt::Key_Right:
-                move_right = false;
+                move_left = false;
                 break;
             case Qt::Key_Space:
             case Qt::Key_W:
@@ -107,6 +112,7 @@ private:
         if (game_map->is_below_map(mario->get_top()) || !mario->is_active()) {
             game_level->restart();
             mario = ui_factory->get_mario();
+            position_camera_on_mario();
         }
 
         if (game->is_level_end()) {
@@ -114,6 +120,7 @@ private:
                 game_level.reset(game_level->get_next());
                 mario = ui_factory->get_mario();
                 game->start_level();
+                position_camera_on_mario();
             } else {
                 game->finish();
                 close();
@@ -143,6 +150,43 @@ private:
             }
             mario->move_map_left();
         }
+    }
+
+    void adjust_window_size() {
+        const QSize scene_size = sceneRect().size().toSize();
+        const QRect available_geometry =
+            QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->availableGeometry()
+                                             : QRect(0, 0, 1280, 720);
+
+        const int max_width = static_cast<int>(available_geometry.width() * 0.8);
+        const int max_height = static_cast<int>(available_geometry.height() * 0.8);
+
+        const QSize target_size(
+            std::min(scene_size.width(), max_width),
+            std::min(scene_size.height(), max_height));
+
+        setFixedSize(target_size);
+    }
+
+    void apply_view_scale() {
+        static constexpr qreal VIEW_SCALE = 0.9;
+        resetTransform();
+        scale(VIEW_SCALE, VIEW_SCALE);
+    }
+
+    void position_camera_on_mario() {
+        if (!mario) {
+            return;
+        }
+
+        const auto rect = mario->get_rect();
+        const qreal mario_center_x = (rect.get_left() + rect.get_right()) / 2.0;
+        const qreal mario_center_y = (rect.get_top() + rect.get_bottom()) / 2.0;
+
+        const qreal view_width_scene = viewport()->width() / std::max(transform().m11(), 0.0001);
+        const qreal offset_x = view_width_scene * 0.05; // place Mario slightly left of center
+
+        centerOn(mario_center_x + offset_x, mario_center_y);
     }
 
 private:
