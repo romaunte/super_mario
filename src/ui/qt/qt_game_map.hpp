@@ -10,8 +10,6 @@
 namespace biv {
 
 class QtGameMap : public QGraphicsScene, public GameMap {
-    Q_OBJECT
-
 private:
     std::vector<QtUIObject*> objs;
 
