@@ -2,7 +2,7 @@
 
 #include <QGraphicsItem>
 
-#include "objects/box.hpp"
+#include "box.hpp"
 #include "qt_ui_obj_rect_adapter.hpp"
 
 namespace biv {

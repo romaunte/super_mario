@@ -1,6 +1,6 @@
 #include "qt_ui_factory.hpp"
 
-using biv::QtUIFactory;
+namespace biv {
 
 QtUIFactory::QtUIFactory(Game* game)
     : UIFactory(game) {
@@ -157,3 +157,5 @@ Mario* QtUIFactory::get_mario() {
 void QtUIFactory::create_game_map() {
     game_map = new QtGameMap(30, 200);
 }
+
+} // namespace biv
