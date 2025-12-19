@@ -13,6 +13,8 @@
 #include "qt_ui_factory.hpp"
 
 class GameWindow : public QGraphicsView {
+    Q_OBJECT
+
 public:
     explicit GameWindow(QWidget* parent = nullptr)
         : QGraphicsView(parent) {
@@ -166,3 +168,5 @@ int main(int argc, char* argv[]) {
 
     return QApplication::exec();
 }
+
+#include "main.moc"
