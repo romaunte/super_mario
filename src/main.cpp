@@ -168,3 +168,5 @@ int main(int argc, char* argv[]) {
 
     return QApplication::exec();
 }
+
+#include "main.moc"
