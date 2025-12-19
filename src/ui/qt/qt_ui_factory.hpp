@@ -34,6 +34,7 @@ private:
 
 public:
     explicit QtUIFactory(Game* game);
+    ~QtUIFactory() override;
 
     void clear_data() override;
 
