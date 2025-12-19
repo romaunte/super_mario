@@ -1,8 +1,11 @@
 #include <QApplication>
 #include <QGraphicsView>
+#include <QGuiApplication>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QScreen>
 #include <QTimer>
+#include <algorithm>
 #include <memory>
 
 #include "first_level.hpp"
@@ -30,7 +33,7 @@ public:
 
         setScene(game_map);
         setSceneRect(game_map->sceneRect());
-        setFixedSize(sceneRect().size().toSize());
+        adjust_window_size();
 
         connect(&timer, &QTimer::timeout, this, &GameWindow::tick);
         timer.start(16); // ~60 FPS
@@ -143,6 +146,22 @@ private:
             }
             mario->move_map_left();
         }
+    }
+
+    void adjust_window_size() {
+        const QSize scene_size = sceneRect().size().toSize();
+        const QRect available_geometry =
+            QGuiApplication::primaryScreen() ? QGuiApplication::primaryScreen()->availableGeometry()
+                                             : QRect(0, 0, 1280, 720);
+
+        const int max_width = static_cast<int>(available_geometry.width() * 0.9);
+        const int max_height = static_cast<int>(available_geometry.height() * 0.9);
+
+        const QSize target_size(
+            std::min(scene_size.width(), max_width),
+            std::min(scene_size.height(), max_height));
+
+        setFixedSize(target_size);
     }
 
 private:
