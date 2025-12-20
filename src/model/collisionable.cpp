@@ -12,10 +12,10 @@ bool Collisionable::has_collision(Rect* obj) const noexcept {
 	);
 }
 
-bool Collisionable::is_alive() const noexcept {
-	return alive;
+bool Collisionable::is_active() const noexcept {
+	return is_active_;
 }
 
 void Collisionable::kill() noexcept {
-	alive = false;
+	is_active_ = false;
 }

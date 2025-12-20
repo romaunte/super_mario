@@ -1,7 +1,7 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
 		os_control_settings.cpp
-		user_key_input.cpp
+		user_input.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

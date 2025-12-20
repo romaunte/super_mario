@@ -1,12 +1,13 @@
 #include "console_game_map.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
 
 using biv::ConsoleGameMap;
 
 ConsoleGameMap::ConsoleGameMap(const int height, const int width) 
-	: height(height), width(width) {
+	: GameMap(height, width) {
 
 	map = new char*[height];
 	for (int i = 0; i < height; i++) {
@@ -70,6 +71,10 @@ void ConsoleGameMap::refresh() noexcept {
 	}
 }
 
+void ConsoleGameMap::remove_obj(ConsoleUIObject* obj) {
+	objs.erase(std::remove(objs.begin(), objs.end(), obj), objs.end());
+}
+
 void ConsoleGameMap::remove_objs() {
 	objs.clear();
 }
@@ -78,11 +83,4 @@ void ConsoleGameMap::show() const noexcept {
 	for (int i = 0; i < height; i++) {
 		std::cout << map[i];
 	}
-}
-
-// ----------------------------------------------------------------------------
-// 									PRIVATE
-// ----------------------------------------------------------------------------
-bool ConsoleGameMap::is_on_map(const int x, const int y) const noexcept {
-	return x >=0 && x < width && y >= 0 && y < height;
 }

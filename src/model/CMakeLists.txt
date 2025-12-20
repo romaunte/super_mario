@@ -1,10 +1,10 @@
 target_sources(${PROJECT_NAME}
 	PRIVATE
 		collisionable.cpp
-		mario.cpp
+		game_map.cpp
 		movable.cpp
 		rect.cpp
-		ship.cpp
+		rect_map_movable_adapter.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
